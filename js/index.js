@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function showDetails(book) {
-        detailsPanel.textContent = `${book.title} \br ${book.subtitle} /br ${book.author}`
+        detailsPanel.innerHTML = `${book.title} \br ${book.subtitle} /br ${book.author}`
     }
 
 
