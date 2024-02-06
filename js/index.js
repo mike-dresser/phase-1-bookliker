@@ -1,28 +1,26 @@
-let currentUser = {};
 
-document.addEventListener("DOMContentLoaded", function() {
-
-
-
+// document.addEventListener("DOMContentLoaded", function() {
+    
+    
+    
     const bookList = document.querySelector('#list');
     const detailsPanel = document.querySelector('#book-details');
-
+    
     const detailImage = detailsPanel.querySelector('img');
     const detailTitle = detailsPanel.querySelector('h1');
     const detailSubtitle = detailsPanel.querySelector('h2');
     const detailAuthor = detailsPanel.querySelector('h3');
     const detailDescription = detailsPanel.querySelector('p');
     const userLikeList = detailsPanel.querySelector('ul');
-
-    const likeButton = detailsPanel.querySelector('#like-button');
-
+    let likeButton = detailsPanel.querySelector('button');
+        
+    let currentUser = {};
     const CURRENT_USER_ID = 11; //  My id used for testing
   
     fetch(`http://localhost:3000/users?id=${CURRENT_USER_ID}`)
         .then(response => response.json())
         .then(user => {
             currentUser = user[0];
-            console.log(currentUser);
     });
 
         
@@ -65,19 +63,28 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function initLikeButton(book) {
+        likeButton.remove();
+        likeButton = document.createElement('button');
+        likeButton.textContent = (book.users.find(user => user.id === currentUser.id))
+            ? 'Un-Like'
+            : 'Like';
         likeButton.addEventListener('click', () => {
             toggleLike(book);
-        })
+        });
+        detailsPanel.append(likeButton);
     }
 
     function toggleLike(book) {
-        let newLikeObj = {users: [...book.users]};
+        likeButton.textContent = (likeButton.textContent === 'Like')
+            ? 'Un-like'
+            : 'Like';
+        let newLikeObj = {users: book.users};
         if (book.users.find(user => user.id === currentUser.id)) {
                 book.users.splice(book.users.indexOf(currentUser), 1);
-                patchUsers(book, {users: [...book.users]});
+                patchUsers(book, newLikeObj);
             } else {
-                newLikeObj.users.push(currentUser);
-                console.log(newLikeObj);
+                book.users.push(currentUser);
+                newLikeObj.users = book.users;
                 patchUsers(book, newLikeObj);
             }
     }
@@ -93,13 +100,12 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
             book.users = data.users;
-            console.log(book.users);
             displayLikes(book);
 
         })
 
     }
 
-});
+// });
 
 
